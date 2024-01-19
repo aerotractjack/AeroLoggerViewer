@@ -7,6 +7,8 @@ on:
 env:
   REMOTE_IP: 67.210.192.18
   REMOTE_DIR: /home/aerotract/software/AeroLoggerViewer
+  REMOTE_API_DIR: /home/aerotract/software/AeroLoggerViewer/API
+  REMOTE_DASH_DIR: /home/aerotract/software/AeroLoggerViewer/dashboard
   RESTART_SCRIPT: /home/aerotract/software/internal-tools/restart-service.sh
 
 jobs:
@@ -51,4 +53,4 @@ jobs:
       - name: Install updates on ${{ matrix.targets.name }}
         run: |
           ssh -o PasswordAuthentication=no -p ${{ matrix.targets.port }} aerotract@${{ env.REMOTE_IP }} "python3 -m pip install --user -r ${{ env.REMOTE_DIR }}/requirements.txt"
-          ssh -o PasswordAuthentication=no -p ${{ matrix.targets.port }} aerotract@${{ env.REMOTE_IP }} "cd ${{ env.REMOTE_DIR }}; ${{ env.RESTART_SCRIPT }} AeroLoggerViewer.service"
+          ssh -o PasswordAuthentication=no -p ${{ matrix.targets.port }} aerotract@${{ env.REMOTE_IP }} "cd ${{ env.REMOTE_API_DIR }}; ${{ env.RESTART_SCRIPT }} AeroLoggerViewer.service"
