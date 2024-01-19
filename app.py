@@ -1,7 +1,9 @@
 from flask import Flask, jsonify, request
+import os
+from pathlib import Path
 from filelock import FileLock
 
-from aerologger import AeroLogger
+from aerologger import AeroLoggerBase
 
 app = Flask(__name__)
 app.config['JSONIFY_PRETTYPRINT_REGULAR'] = True
@@ -25,6 +27,16 @@ def read_last_n_lines(filename, n_lines):
 @app.route("/health", methods=['GET', 'POST'])
 def health():
     return jsonify("healthy"), 200
+
+@app.route("/describe_logs", methods=['GET'])
+def describe_logs():
+    logs = {}
+    for logd in os.listdir(AeroLoggerBase):
+        logs[logd] = {
+            "log_path": (Path(AeroLoggerBase) / logd).with_suffix(".log").as_posix(),
+            "lock_path": (Path(AeroLoggerBase) / logd).with_suffix(".log.lock").as_posix()
+        }
+    return jsonify(logs), 200
 
 @app.route("/read_log", methods=['GET', 'POST'])
 def read_log(data=None):
@@ -52,6 +64,10 @@ def read_log_example():
         "n_lines": 20
     }
     return read_log(preset_data)
+
+@app.route("/describe_logs_example", methods=['GET'])
+def describe_logs_example():
+    return describe_logs()
 
 if __name__ == "__main__":
     from waitress import serve
