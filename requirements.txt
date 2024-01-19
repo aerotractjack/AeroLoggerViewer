@@ -1,0 +1,3 @@
+flask
+waitress
+aerologger @ git+https://github.com/aerotractjack/AeroLogger@main
