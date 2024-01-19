@@ -44,7 +44,7 @@ def read_log(data=None):
         data = request.get_json()
     lock_path = data.get('lock_path')
     log_path = data.get('log_path')
-    n_lines = data.get('n_lines')
+    n_lines = data.get('n_lines', 100)
 
     if not all([lock_path, log_path, n_lines]):
         return "Missing data", 400
@@ -59,9 +59,8 @@ def read_log(data=None):
 @app.route("/read_log_example", methods=['GET', 'POST'])
 def read_log_example():
     preset_data = {
-        "lock_path": "/home/aerotract/microservice_logs/UPQ/UPQ.log.lock",
-        "log_path": "/home/aerotract/microservice_logs/UPQ/UPQ.log",
-        "n_lines": 20
+        "name": "UPQ",
+        "n_lines": 50
     }
     return read_log(preset_data)
 
