@@ -1,13 +1,13 @@
 from flask import Flask, jsonify
+from pathlib import Path
 
 from aerologger import AeroLogger
 
-dup_logger = AeroLogger(
-    'DUP',
-    'DUP/DUP.log'
-)
 
 app = Flask(__name__)
+
+def read_locked(lock_path, log_path, lines):
+    pass
 
 @app.route("/health", methods=['GET', 'POST'])
 def health():
@@ -15,4 +15,4 @@ def health():
 
 if __name__ == "__main__":
     from waitress import serve
-    serve(app, host="127.0.0.1", port=95831)
+    serve(app, port=27895, host="127.0.0.1")
