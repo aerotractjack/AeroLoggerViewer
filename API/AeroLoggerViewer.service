@@ -3,10 +3,10 @@ Description=Run AeroLoggerViewer API
 After=network.target
 
 [Service]
-WorkingDirectory=/home/aerotract/software/AeroLoggerViewer
+WorkingDirectory=/home/aerotract/software/AeroLoggerViewer/API
 User=aerotract
 Restart=on-failure
-ExecStart=/usr/bin/python3 /home/aerotract/software/AeroLoggerViewer/app.py
+ExecStart=/usr/bin/python3 /home/aerotract/software/AeroLoggerViewer/API/app.py
 
 [Install]
 WantedBy=multi-user.target
