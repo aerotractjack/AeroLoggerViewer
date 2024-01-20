@@ -54,3 +54,4 @@ jobs:
         run: |
           ssh -o PasswordAuthentication=no -p ${{ matrix.targets.port }} aerotract@${{ env.REMOTE_IP }} "python3 -m pip install --user -r ${{ env.REMOTE_DIR }}/requirements.txt"
           ssh -o PasswordAuthentication=no -p ${{ matrix.targets.port }} aerotract@${{ env.REMOTE_IP }} "cd ${{ env.REMOTE_API_DIR }}; ${{ env.RESTART_SCRIPT }} AeroLoggerViewer.service"
+          ssh -o PasswordAuthentication=no -p ${{ matrix.targets.port }} aerotract@${{ env.REMOTE_IP }} "cd ${{ env.REMOTE_DASH_DIR }}/desktop; ./install.sh"

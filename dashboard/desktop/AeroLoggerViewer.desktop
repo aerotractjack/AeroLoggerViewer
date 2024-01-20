@@ -1,0 +1,7 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=AeroLog Viewer
+Icon=/home/aerotract/software/AeroLoggerViewer/dashboard/desktop/AeroLoggerViewer.icon
+Exec=/usr/bin/python3 /home/aerotract/software/AeroLoggerViewer/dashboard/main.py
+Terminal=False

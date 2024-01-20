@@ -33,8 +33,8 @@ def describe_logs():
     logs = {}
     for logd in os.listdir(AeroLoggerBase):
         logs[logd] = {
-            "log_path": (Path(AeroLoggerBase) / logd).with_suffix(".log").as_posix(),
-            "lock_path": (Path(AeroLoggerBase) / logd).with_suffix(".log.lock").as_posix()
+            "log_path": (Path(AeroLoggerBase)/logd/logd).with_suffix(".log").as_posix(),
+            "lock_path": (Path(AeroLoggerBase)/logd/logd).with_suffix(".log.lock").as_posix()
         }
     return jsonify(logs), 200
 
