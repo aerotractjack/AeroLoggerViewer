@@ -70,4 +70,4 @@ def describe_logs_example():
 
 if __name__ == "__main__":
     from waitress import serve
-    serve(app, port=27895, host="127.0.0.1")
+    serve(app, port=27895, host="0.0.0.0")
