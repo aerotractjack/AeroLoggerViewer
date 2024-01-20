@@ -1,13 +1,10 @@
 import sys
 from PyQt6.QtWidgets import (QApplication, QWizard, QHBoxLayout, QVBoxLayout, 
-                    QComboBox, QLabel, QPushButton, QFileDialog, QWizardPage,
-                    QListWidget, QWidget, QTabWidget, QTextEdit)
-from PyQt6.QtCore import QFileInfo
+                             QLabel, QPushButton, QWizardPage,
+                            QListWidget, QTextEdit)
 from PyQt6.QtGui import QFont, QTextCursor
 from PyQt6.QtCore import Qt
-import json
 import os
-from pathlib import Path
 import requests
 
 from syntax_highlight import LogHighlighter
@@ -18,6 +15,7 @@ logger = AeroLogger(
     'AeroLoggerDash/AeroLoggerDash.log'
 )
 
+# TODO allow user to select machine 
 api_url = "http://127.0.0.1:27895"
 
 class LogSelectionPage(QWizardPage):
@@ -117,6 +115,7 @@ class LogContentPage(QWizardPage):
         self.logLayout.addLayout(logLayout)
 
     def readLogContent(self, logPath):
+        # TODO fetch data from api
         with open(logPath, 'r') as file:
             return file.read()
 
