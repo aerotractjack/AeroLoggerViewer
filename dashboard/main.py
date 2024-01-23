@@ -95,7 +95,7 @@ class LogContentPage(QWizardPage):
         logLayout.addWidget(titleLabel)
 
         # Create the QTextEdit for log content
-        logContent = self.readLogContent(log_desc['log_path'])
+        logContent = self.readLogAPI(log_desc)
         textEdit = QTextEdit()
         textEdit.setPlainText(logContent)
         textEdit.setReadOnly(True)
@@ -113,11 +113,12 @@ class LogContentPage(QWizardPage):
 
         # Add this log's layout to the main log layout
         self.logLayout.addLayout(logLayout)
-
-    def readLogContent(self, logPath):
-        # TODO fetch data from api
-        with open(logPath, 'r') as file:
-            return file.read()
+        
+    def readLogAPI(self, log_desc):
+        req = requests.post(api_url + "/read_log", 
+                            json=log_desc,
+                            headers={"Content-Type": "application/json"})
+        return req.json()
 
     def clearLayout(self, layout):
         while layout.count():
