@@ -9,6 +9,7 @@ import json
 
 from syntax_highlight import LogHighlighter
 
+from requires_nas import requires_nas_loop
 from aerologger import AeroLogger
 logger = AeroLogger(
     'AeroLoggerDash',
@@ -21,6 +22,7 @@ api_url = "http://127.0.0.1:27895"
 class LogSelectionPage(QWizardPage):
     def __init__(self):
         super().__init__()
+        requires_nas_loop(info_logger=logger.info, error_logger=logger.error)
         with open("/home/aerotract/NAS/main/software/host_map.json", "r") as fp:
             self.api_url_map = json.loads(fp.read())
         self.api_host = "My Machine"
