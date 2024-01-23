@@ -1,11 +1,11 @@
 import sys
 from PyQt6.QtWidgets import (QApplication, QWizard, QHBoxLayout, QVBoxLayout, 
                              QLabel, QPushButton, QWizardPage,
-                            QListWidget, QTextEdit)
+                            QListWidget, QTextEdit, QComboBox)
 from PyQt6.QtGui import QFont, QTextCursor
 from PyQt6.QtCore import Qt
-import os
 import requests
+import json 
 
 from syntax_highlight import LogHighlighter
 
@@ -21,26 +21,45 @@ api_url = "http://127.0.0.1:27895"
 class LogSelectionPage(QWizardPage):
     def __init__(self):
         super().__init__()
+        with open("/home/aerotract/software/AeroLoggerViewer/dashboard/host.cfg", "r") as fp:
+            self.api_url_map = json.loads(fp.read())
+        self.api_url = self.api_url_map["My Machine"] 
+        self.logList = QListWidget()
+        self.logList.setSelectionMode(QListWidget.SelectionMode.MultiSelection)
         self.log_descs = self.describe_logs()
         self.init_ui()
 
+    def on_api_selection_changed(self, text):
+        self.api_url = self.api_url_map[text]
+        self.log_descs = self.describe_logs() 
+        self.update_log_list()
+
+    def update_log_list(self):
+        self.logList.clear()  # Clear existing items in the list
+        for key in self.log_descs.keys():
+            self.logList.addItem(key)  # Add new items based on updated log descriptions
+
     def describe_logs(self):
-        req = requests.get(api_url + "/describe_logs")
+        req = requests.get(self.api_url + "/describe_logs")
         if not req.status_code == 200:
             raise ValueError("Error reaching API: " + req.text)
         return req.json()
         
     def init_ui(self):
         layout = QVBoxLayout(self)
+
+        self.apiSelectionCombo = QComboBox()
+        for key in self.api_url_map.keys():
+            self.apiSelectionCombo.addItem(key)
+        self.apiSelectionCombo.setCurrentText("My Machine")  
+        self.apiSelectionCombo.currentTextChanged.connect(self.on_api_selection_changed)
+        layout.addWidget(self.apiSelectionCombo)
         
         titleLabel = QLabel("Select one or more logs to view")
         titleLabel.setFont(QFont("Liberation Mono", 16, QFont.Weight.Bold)) 
         layout.addWidget(titleLabel)
 
-        self.logList = QListWidget()
-        self.logList.setSelectionMode(QListWidget.SelectionMode.MultiSelection)
-        for key in self.log_descs.keys():
-            self.logList.addItem(key)
+        self.update_log_list()
         layout.addWidget(self.logList)
 
     def initializePage(self):
@@ -48,7 +67,7 @@ class LogSelectionPage(QWizardPage):
 
     def nextId(self):
         selected_logs = [item.text() for item in self.logList.selectedItems()]
-        self.wizard().logContentPage.setLogContents(selected_logs, self.log_descs)
+        self.wizard().logContentPage.setLogContents(self.api_url, selected_logs, self.log_descs)
         return super().nextId()
 
 class LogContentPage(QWizardPage):
@@ -71,7 +90,8 @@ class LogContentPage(QWizardPage):
         self.logLayout = QHBoxLayout()
         self.mainLayout.addLayout(self.logLayout)
 
-    def setLogContents(self, log_keys, log_descs):
+    def setLogContents(self, api_url, log_keys, log_descs):
+        self.current_api_url = api_url
         self.current_log_keys = log_keys
         self.current_log_descs = log_descs
         self.refreshLogs()
@@ -115,7 +135,7 @@ class LogContentPage(QWizardPage):
         self.logLayout.addLayout(logLayout)
         
     def readLogAPI(self, log_desc):
-        req = requests.post(api_url + "/read_log", 
+        req = requests.post(self.current_api_url + "/read_log", 
                             json=log_desc,
                             headers={"Content-Type": "application/json"})
         return req.json()
