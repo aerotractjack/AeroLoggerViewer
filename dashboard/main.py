@@ -21,7 +21,7 @@ api_url = "http://127.0.0.1:27895"
 class LogSelectionPage(QWizardPage):
     def __init__(self):
         super().__init__()
-        with open("/home/aerotract/software/AeroLoggerViewer/dashboard/host.cfg", "r") as fp:
+        with open("/home/aerotract/NAS/main/software/host_map.json", "r") as fp:
             self.api_url_map = json.loads(fp.read())
         self.api_host = "My Machine"
         self.api_url = self.api_url_map["My Machine"] 
