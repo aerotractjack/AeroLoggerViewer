@@ -23,6 +23,7 @@ class LogSelectionPage(QWizardPage):
         super().__init__()
         with open("/home/aerotract/software/AeroLoggerViewer/dashboard/host.cfg", "r") as fp:
             self.api_url_map = json.loads(fp.read())
+        self.api_host = "My Machine"
         self.api_url = self.api_url_map["My Machine"] 
         self.logList = QListWidget()
         self.logList.setSelectionMode(QListWidget.SelectionMode.MultiSelection)
@@ -30,6 +31,7 @@ class LogSelectionPage(QWizardPage):
         self.init_ui()
 
     def on_api_selection_changed(self, text):
+        self.api_host = text
         self.api_url = self.api_url_map[text]
         self.log_descs = self.describe_logs() 
         self.update_log_list()
@@ -67,7 +69,7 @@ class LogSelectionPage(QWizardPage):
 
     def nextId(self):
         selected_logs = [item.text() for item in self.logList.selectedItems()]
-        self.wizard().logContentPage.setLogContents(self.api_url, selected_logs, self.log_descs)
+        self.wizard().logContentPage.setLogContents(self.api_host, self.api_url, selected_logs, self.log_descs)
         return super().nextId()
 
 class LogContentPage(QWizardPage):
@@ -76,10 +78,15 @@ class LogContentPage(QWizardPage):
         self.highlighters = []
         self.current_log_keys = []
         self.current_log_descs = {}
+        self.host_label = None
         self.initUI()
 
     def initUI(self):
         self.mainLayout = QVBoxLayout(self)  # Main layout to hold everything
+
+        self.host_label = QLabel("API URL: Not Set")
+        self.host_label.setFont(QFont("Arial", 12, QFont.Weight.Bold))
+        self.mainLayout.addWidget(self.host_label)
 
         # Create and add the refresh button at the top
         self.refreshButton = QPushButton("Refresh")
@@ -90,10 +97,12 @@ class LogContentPage(QWizardPage):
         self.logLayout = QHBoxLayout()
         self.mainLayout.addLayout(self.logLayout)
 
-    def setLogContents(self, api_url, log_keys, log_descs):
+    def setLogContents(self, api_host, api_url, log_keys, log_descs):
+        self.current_api_host = api_host
         self.current_api_url = api_url
-        self.current_log_keys = log_keys
+        self.current_log_keys = log_keys        
         self.current_log_descs = log_descs
+        self.host_label.setText(f"Reading logs from: {self.current_api_host}")
         self.refreshLogs()
 
     def refreshLogs(self):
