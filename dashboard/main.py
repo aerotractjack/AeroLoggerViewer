@@ -16,9 +16,6 @@ logger = AeroLogger(
     'AeroLoggerDash/AeroLoggerDash.log'
 )
 
-# TODO allow user to select machine 
-api_url = "http://127.0.0.1:27895"
-
 class LogSelectionPage(QWizardPage):
     def __init__(self):
         super().__init__()
